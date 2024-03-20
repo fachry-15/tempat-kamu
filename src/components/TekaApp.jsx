@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Flowbite } from "flowbite-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NavigationBar from "./TekaHeader";
 import HeroComponent from "./TekaHero";
 import InfoComponent from "./TekaInfo";
 import FormComponent from "./TekaForm";
+import Pencarian from "./TekaPencarian";
 import FooterItem from "./TekaFooter";
-import CardCatatan from "./TekaCatatan";
-import CardArsip from "./TekaArsip";
+import CardCatatan from "./TekaCardData";
 
 function App() {
-  const [isDarkMode] = useState(false);
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -22,7 +20,7 @@ function App() {
     titleMaxLength
   );
 
-  const handleFormSubmit = (e) => {
+  const tambah_catatan = (e) => {
     e.preventDefault();
     const newDate = new Date();
     const formattedDate = format(newDate, "EEEE, dd MMMM yyyy");
@@ -33,11 +31,13 @@ function App() {
       archived: false,
       createdAt: formattedDate,
     };
-    setNotes([...notes, newData]);
+    const updatedNotes = [...notes, newData];
+    setNotes(updatedNotes);
+    localStorage.setItem("notes", JSON.stringify(updatedNotes));
+    toast.success("Catatan berhasil disimpan!");
+    console.log("Semua Data Catatan Setelah Penambahan Baru:", updatedNotes);
     setTitle("");
     setBody("");
-    localStorage.setItem("notes", JSON.stringify([...notes, newData]));
-    toast.success("Catatan berhasil disimpan!");
   };
 
   useEffect(() => {
@@ -54,9 +54,9 @@ function App() {
       setNotes(updatedNotes);
       localStorage.setItem("notes", JSON.stringify(updatedNotes));
       toast.success("Catatan berhasil dihapus!");
+      console.log("Semua Data Catatan Setelah Penghapusan:", updatedNotes);
     }
   };
-
   const cari_data = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -69,39 +69,38 @@ function App() {
     }
   };
 
-  const pindah_arsip = (id) => {
+  const pindah_data = (id) => {
     const updatedNotes = notes.map((note) => {
       if (note.id === id) {
-        return { ...note, archived: true };
+        return { ...note, archived: !note.archived }; // Mengubah nilai archived menjadi kebalikan dari nilai saat ini
       }
       return note;
     });
-    setNotes(updatedNotes);
-    localStorage.setItem("notes", JSON.stringify(updatedNotes));
-    toast.success("Catatan kamu berhasil diarsipkan!");
-  };
 
-  const kembalikan_catatan = (id) => {
-    const updatedNotes = notes.map((note) => {
-      if (note.id === id) {
-        return { ...note, archived: false };
-      }
-      return note;
-    });
     setNotes(updatedNotes);
     localStorage.setItem("notes", JSON.stringify(updatedNotes));
-    toast.success("Catatan berhasil dikembalikan dari arsip!");
+
+    if (updatedNotes.find(note => note.id === id).archived) {
+      toast.success("Catatan kamu berhasil diarsipkan!");
+      console.log("Semua Data Catatan Setelah Pindah ke Arsip:", updatedNotes);
+    } else {
+      toast.success("Catatan berhasil dikembalikan dari arsip!");
+      console.log("Semua Data Catatan Setelah Kembali dari Arsip:", updatedNotes);
+    }
   };
 
   return (
     <>
-      <Flowbite dark={isDarkMode}>
-        <NavigationBar />
-        <ToastContainer />
-        <HeroComponent />
-        <InfoComponent />
+
+      <NavigationBar />
+      <ToastContainer />
+      <HeroComponent />
+      <InfoComponent />
+      <section className="bg-white dark:bg-stone-900 py-5 m-auto">
+        <h2 className="text-4xl font-bold dark:text-white max-w-fit m-auto">Form mencatat</h2>
+        <p className="mb-3 text-gray-500 dark:text-gray-400 text-center m-auto my-4 ">Disini kamu dapat mencatat semua hal meliputi apapun dengan leluasa dan aman pastinya.</p>
         <FormComponent
-          handleFormSubmit={handleFormSubmit}
+          tambah_catatan={tambah_catatan}
           title={title}
           setTitle={setTitle}
           body={body}
@@ -109,31 +108,35 @@ function App() {
           handleTitleChange={handleTitleChange}
           remainingTitleCharacters={remainingTitleCharacters}
           titleMaxLength={titleMaxLength}
-          cari_data={cari_data}
-          searchTerm={searchTerm}
         />
-        <section className="bg-white dark:bg-stone-900 py-5 m-auto">
-          <h4 className="text-2xl font-bold dark:text-white mx-8 my-5">
-            Catatan Anda
-          </h4>
-          <CardCatatan
-            notes={notes}
-            searchTerm={searchTerm}
-            hapus_data={hapus_data}
-            pindah_arsip={pindah_arsip}
-          />
-          <h4 className="text-2xl font-bold dark:text-white mx-8 my-5">
-            Arsip Catatan
-          </h4>
-          <CardArsip
-            notes={notes}
-            searchTerm={searchTerm}
-            kembalikan_catatan={kembalikan_catatan}
-            hapus_data={hapus_data}
-          />
-        </section>
-        <FooterItem />
-      </Flowbite>
+      </section>
+      <Pencarian
+        cari_data={cari_data}
+        searchTerm={searchTerm}></Pencarian>
+      <section className="bg-white dark:bg-stone-900 py-5 m-auto">
+        <h4 className="text-2xl font-bold dark:text-white mx-8 my-5">
+          Catatan Anda
+        </h4>
+        <CardCatatan
+          notes={notes}
+          searchTerm={searchTerm}
+          hapus_data={hapus_data}
+          pindah_data={pindah_data}
+          isArchived={false}
+        />
+        <h4 className="text-2xl font-bold dark:text-white mx-8 my-5">
+          Arsip Catatan
+        </h4>
+        <CardCatatan
+          notes={notes}
+          searchTerm={searchTerm}
+          pindah_data={pindah_data}
+          hapus_data={hapus_data}
+          isArchived={true}
+        />
+      </section>
+      <FooterItem />
+
     </>
   );
 }
