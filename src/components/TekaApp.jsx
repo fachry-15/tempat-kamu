@@ -68,7 +68,7 @@ function App() {
   const pindah_data = (id) => {
     const updatedNotes = notes.map((note) => {
       if (note.id === id) {
-        return { ...note, archived: !note.archived }; // Mengubah nilai archived menjadi kebalikan dari nilai saat ini
+        return { ...note, archived: !note.archived };
       }
       return note;
     });
