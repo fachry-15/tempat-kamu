@@ -4,7 +4,7 @@ import { Navbar, DarkThemeToggle } from 'flowbite-react';
 function NavigationBar() {
     return (
         <Navbar fluid className='bg-orange-400 dark:bg-stone-800'>
-            <Navbar.Brand href="https://flowbite-react.com ">
+            <Navbar.Brand href="#">
                 <img src="../images/logo-tempat-kamu.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo" />
             </Navbar.Brand>
             <div className="flex md:order-2">

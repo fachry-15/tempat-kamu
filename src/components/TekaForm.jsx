@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Label, TextInput, Textarea, Popover } from 'flowbite-react';
 
-function FormComponent({ tambah_catatan, title, setTitle, body, setBody, handleTitleChange, remainingTitleCharacters, titleMaxLength, cari_data, searchTerm }) {
+function FormComponent({ tambah_catatan, title, setTitle, body, setBody, maksimal_judul, remainingTitleCharacters, titleMaxLength, cari_data, searchTerm }) {
     return (
         <Card className="max-w-lg m-auto mt-5 dark:bg-stone-900">
             <form onSubmit={tambah_catatan} className="flex max-w-lg flex-col gap-4">
@@ -18,7 +18,7 @@ function FormComponent({ tambah_catatan, title, setTitle, body, setBody, handleT
                             </div>
                         }
                     >
-                        <TextInput className='' id="title" type="text" value={title} onChange={handleTitleChange} placeholder="Masukkan judul catatan kamu" maxLength={titleMaxLength} required />
+                        <TextInput className='' id="title" type="text" value={title} onChange={maksimal_judul} placeholder="Masukkan judul catatan kamu" maxLength={titleMaxLength} required />
                     </Popover>
 
                 </div>

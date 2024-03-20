@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NavigationBar from "./TekaHeader";
@@ -9,6 +8,7 @@ import FormComponent from "./TekaForm";
 import Pencarian from "./TekaPencarian";
 import FooterItem from "./TekaFooter";
 import CardCatatan from "./TekaCardData";
+import { DataJs } from "../utils";
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -22,18 +22,16 @@ function App() {
 
   const tambah_catatan = (e) => {
     e.preventDefault();
-    const newDate = new Date();
-    const formattedDate = format(newDate, "EEEE, dd MMMM yyyy");
+    const newDate = new Date().toISOString();
     const newData = {
-      id: notes.length + 1,
+      id: `Catatan${+new Date()}`,
       title: title,
       body: body,
       archived: false,
-      createdAt: formattedDate,
+      createdAt: newDate,
     };
     const updatedNotes = [...notes, newData];
     setNotes(updatedNotes);
-    localStorage.setItem("notes", JSON.stringify(updatedNotes));
     toast.success("Catatan berhasil disimpan!");
     console.log("Semua Data Catatan Setelah Penambahan Baru:", updatedNotes);
     setTitle("");
@@ -41,27 +39,25 @@ function App() {
   };
 
   useEffect(() => {
-    const storedNotes = JSON.parse(localStorage.getItem("notes"));
-    if (storedNotes) {
-      const nonArchivedNotes = storedNotes.filter((note) => !note.archived);
-      setNotes(nonArchivedNotes);
-    }
+    const ambildataadt = DataJs();
+    setNotes(ambildataadt);
+    console.log("Data Catatan Anda:", ambildataadt);
   }, []);
 
   const hapus_data = (id) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus catatan ini?")) {
       const updatedNotes = notes.filter((note) => note.id !== id);
       setNotes(updatedNotes);
-      localStorage.setItem("notes", JSON.stringify(updatedNotes));
       toast.success("Catatan berhasil dihapus!");
       console.log("Semua Data Catatan Setelah Penghapusan:", updatedNotes);
     }
   };
+
   const cari_data = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleTitleChange = (e) => {
+  const maksimal_judul = (e) => {
     const newValue = e.target.value;
     if (newValue.length <= titleMaxLength) {
       setTitle(newValue);
@@ -78,41 +74,48 @@ function App() {
     });
 
     setNotes(updatedNotes);
-    localStorage.setItem("notes", JSON.stringify(updatedNotes));
 
-    if (updatedNotes.find(note => note.id === id).archived) {
+    if (updatedNotes.find((note) => note.id === id).archived) {
       toast.success("Catatan kamu berhasil diarsipkan!");
       console.log("Semua Data Catatan Setelah Pindah ke Arsip:", updatedNotes);
     } else {
       toast.success("Catatan berhasil dikembalikan dari arsip!");
-      console.log("Semua Data Catatan Setelah Kembali dari Arsip:", updatedNotes);
+      console.log(
+        "Semua Data Catatan Setelah Kembali dari Arsip:",
+        updatedNotes
+      );
     }
   };
 
   return (
     <>
-
       <NavigationBar />
       <ToastContainer />
       <HeroComponent />
       <InfoComponent />
       <section className="bg-white dark:bg-stone-900 py-5 m-auto">
-        <h2 className="text-4xl font-bold dark:text-white max-w-fit m-auto">Form mencatat</h2>
-        <p className="mb-3 text-gray-500 dark:text-gray-400 text-center m-auto my-4 ">Disini kamu dapat mencatat semua hal meliputi apapun dengan leluasa dan aman pastinya.</p>
+        <h2 className="text-4xl font-bold dark:text-white max-w-fit m-auto">
+          Form mencatat
+        </h2>
+        <p className="mb-3 text-gray-500 dark:text-gray-400 text-center m-auto my-4 ">
+          Disini kamu dapat mencatat semua hal meliputi apapun dengan leluasa
+          dan aman pastinya.
+        </p>
         <FormComponent
           tambah_catatan={tambah_catatan}
           title={title}
           setTitle={setTitle}
           body={body}
           setBody={setBody}
-          handleTitleChange={handleTitleChange}
+          maksimal_judul={maksimal_judul}
           remainingTitleCharacters={remainingTitleCharacters}
           titleMaxLength={titleMaxLength}
         />
       </section>
       <Pencarian
         cari_data={cari_data}
-        searchTerm={searchTerm}></Pencarian>
+        searchTerm={searchTerm}
+      ></Pencarian>
       <section className="bg-white dark:bg-stone-900 py-5 m-auto">
         <h4 className="text-2xl font-bold dark:text-white mx-8 my-5">
           Catatan Anda
@@ -136,7 +139,6 @@ function App() {
         />
       </section>
       <FooterItem />
-
     </>
   );
 }

@@ -3,6 +3,17 @@ import { Card } from "flowbite-react";
 import ButtonPindah from "./TekaBtnPindah";
 import ButtonHapus from "./TekaBtnHapus";
 
+function format_tanggal(createdAt) {
+    const options = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    };
+    return new Date(createdAt).toLocaleDateString("id-ID", options);
+}
+
+
 function CardCatatan({ notes, searchTerm, hapus_data, pindah_data, isArchived }) {
     const filteredNotes = notes.filter((note) => {
         const titleMatch = note.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -22,7 +33,7 @@ function CardCatatan({ notes, searchTerm, hapus_data, pindah_data, isArchived })
                     <h5 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-white">
                         {note.title}{" "}
                         <p className="text-sm mb-3 text-gray-500 dark:text-gray-400">
-                            {note.createdAt}
+                            {format_tanggal(note.createdAt)}
                         </p>
                     </h5>
                     <p className="text-lg font-normal text-gray-700 dark:text-gray-400">
