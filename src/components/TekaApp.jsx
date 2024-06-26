@@ -8,7 +8,8 @@ import FormComponent from "./TekaForm";
 import Pencarian from "./TekaPencarian";
 import FooterItem from "./TekaFooter";
 import CardCatatan from "./TekaCardData";
-import { DataJs } from "../utils";
+import { getInitialData } from "../utils";
+import { showFormattedDate } from "../utils";
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -39,7 +40,7 @@ function App() {
   };
 
   useEffect(() => {
-    const ambildataadt = DataJs();
+    const ambildataadt = getInitialData();
     setNotes(ambildataadt);
     console.log("Data Catatan Anda:", ambildataadt);
   }, []);
@@ -126,6 +127,7 @@ function App() {
           hapus_data={hapus_data}
           pindah_data={pindah_data}
           isArchived={false}
+          format_tanggal={showFormattedDate}
         />
         <h4 className="text-2xl font-bold dark:text-white mx-8 my-5">
           Arsip Catatan
@@ -136,6 +138,7 @@ function App() {
           pindah_data={pindah_data}
           hapus_data={hapus_data}
           isArchived={true}
+          format_tanggal={showFormattedDate}
         />
       </section>
       <FooterItem />
